@@ -35,7 +35,7 @@ song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path
 
 if you want to use other language then russian:
 
-change 
+change language in
 
 rec = r.recognize_google(audio_listened, language="ru-RU").lower() 
 
