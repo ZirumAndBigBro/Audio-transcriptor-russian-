@@ -9,8 +9,11 @@
 
 # requirements:
 pip install pydub
+
 pip install SpeechRecognition
+
 to convert integers to text install https://github.com/Yuego/num2t4ru  put to your "\Python\Python36\Lib\site-packages" directory
+
 to work with mp3-files you will need to install ffmpeg and put it to PATH. https://github.com/FFmpeg/FFmpeg Windows instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
 
 # how to use
@@ -25,10 +28,15 @@ to work with mp3-files you will need to install ffmpeg and put it to PATH. https
 - set silence value silence_thresh = -36
 
 if you want to use other language as russian:
+
 change 
+
 rec = r.recognize_google(audio_listened, language="ru-RU").lower() 
+
 as discribed here https://cloud.google.com/speech-to-text/docs/languages
+
 replace 
+
 rec = re.sub(r"(\d+)", lambda x: num2text(int(x.group(0))), rec)
 
 
