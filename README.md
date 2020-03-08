@@ -1,20 +1,22 @@
 # Audio-transcriptor-russian-
-[Russian] This script will split audio file on silence, transcript it with google recognition and save it as in LJSpeech-1.1 dataset manner.
+This script will split audio file on silence, transcript it with google recognition and save it in LJSpeech-1.1 dataset manner.
 - This script will create the folder structure in the same manner as LJSpeech-1.1 dataset.
 - This script will splitt the audio files on silenses and send the audio chunks to google recognition service
 - Google will return the recognized text.
+- Text normalization will change integers and text written with latin letters into russian text. 
 - This text will be writen to metadata.csv in the same manner as in LJSpeech-1.1 dataset.
-- The audio chunks will also be saved in the same manner as in LJSpeech-1.1 dataset.
-
+- Audio chunks will be normalized on loudness.
+- Audio chunks will also be saved in the same manner as in LJSpeech-1.1 dataset.
+- See script for further description.
 
 # requirements:
 pip install pydub
 
 pip install SpeechRecognition
 
-to convert integers to text install https://github.com/Yuego/num2t4ru  put to your "\Python\Python36\Lib\site-packages" directory
+to work with mp3-files you will need to install ffmpeg and put it to PATH. https://github.com/FFmpeg/FFmpeg Windows installation instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
 
-to work with mp3-files you will need to install ffmpeg and put it to PATH. https://github.com/FFmpeg/FFmpeg Windows instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
+Text normalization from https://github.com/snakers4/russian_stt_text_normalization is implemented here. 
 
 # how to use
 - This script must be in the same folder with audio files that should be transcripted
@@ -23,11 +25,15 @@ to work with mp3-files you will need to install ffmpeg and put it to PATH. https
 
 # how to optimize
 - assign an Speaker_id if you want
-- set other audio framerate in song = song.set_frame_rate(16000)
-- set silence duration for cut min_silence_len = 500
-- set silence value silence_thresh = -36
+- if you want to transcribe .wav-files instead of mp3 change 
 
-if you want to use other language as russian:
+song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path)
+
+- change audio framerate in song = song.set_frame_rate(16000)
+- change silence duration for cut min_silence_len = 500
+- change silence value silence_thresh = -36
+
+if you want to use other language then russian:
 
 change 
 
@@ -37,7 +43,7 @@ as discribed here https://cloud.google.com/speech-to-text/docs/languages
 
 replace 
 
-rec = re.sub(r"(\d+)", lambda x: num2text(int(x.group(0))), rec)
+rec = norm.norm_text(rec)
 
 
 I wish you success
