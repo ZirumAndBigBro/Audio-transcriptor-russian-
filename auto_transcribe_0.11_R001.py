@@ -15,7 +15,7 @@
 import speech_recognition as sr 
 import time
 import os
-from num2t4ru import num2text #https://github.com/Yuego/num2t4ru  put to your "\Python\Python36\Lib\site-packages" directory
+from normalizer.normalizer import Normalizer # https://github.com/snakers4/russian_stt_text_normalization
 import re
 
 from pydub import AudioSegment 
@@ -24,6 +24,8 @@ from pydub import AudioSegment, effects
 
 # if you have many speakers, you can give each speaker an unique speaker id
 Speaker_id = 'R001'
+
+norm = Normalizer()
 
 # a function that splits the audio file into chunks 
 # and applies speech recognition 
@@ -119,9 +121,9 @@ def silence_based_conversion(path):
 			rec = r.recognize_google(audio_listened, language="ru-RU").lower()
 
 			# google recognition return numbers as integers i.e. "1, 200, 35".
-			# num2text will read this numbers and return this as a writen russian text i.e. "один, двести, тридцать пять"
+			# text normalizer will read this numbers and return this as a writen russian text i.e. "один, двести, тридцать пять"
 			# if you use other language as russian, repalce this line 
-			rec = re.sub(r"(\d+)", lambda x: num2text(int(x.group(0))), rec)
+			rec = norm.norm_text(rec)
 
 			# write the output to the metadata.csv.
 			# in the same manner as in LJSpeech-1.1
