@@ -29,28 +29,28 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 
 song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path)
 
-- change audio framerate in 
+- change audio framerate in line
 
 song = song.set_frame_rate(16000)
 
-- change silence duration for cut 
+- change silence duration in line
 
 min_silence_len = 100
 
-- change silence value 
+- change silence value in line
 
 silence_thresh = -36
 
 
-if you want to use other language then russian:
+- if you want to use other language then russian:
 
-change language in
+change language in line
 
 rec = r.recognize_google(audio_listened, language="ru-RU").lower() 
 
 as discribed here https://cloud.google.com/speech-to-text/docs/languages
 
-replace 
+and replace line
 
 rec = norm.norm_text(rec)
 
