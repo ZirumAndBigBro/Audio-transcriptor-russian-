@@ -14,6 +14,10 @@ pip install pydub
 
 pip install SpeechRecognition
 
+pip install torch --> for normalizer
+
+pip install tqdm --> for normalizer
+
 to work with mp3-files you will need to install ffmpeg and put it to PATH. https://github.com/FFmpeg/FFmpeg Windows installation instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
 
 Text normalization from https://github.com/snakers4/russian_stt_text_normalization is implemented here. 
