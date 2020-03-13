@@ -23,15 +23,24 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 - The names of the audio files must be as follows: 01.mp3, 02.mp3, ..., 95.mp3 (or) 01.wav, 02.wav, ..., 95.wav
 - start the audio_transcribe.py in IDLE 
 
-# how to optimize
+# how to optimize for your audio
 - assign an Speaker_id if you want
 - if you want to transcribe .wav-files instead of mp3 change 
 
 song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path)
 
-- change audio framerate in song = song.set_frame_rate(16000)
-- change silence duration for cut min_silence_len = 500
-- change silence value silence_thresh = -36
+- change audio framerate in 
+
+song = song.set_frame_rate(16000)
+
+- change silence duration for cut 
+
+min_silence_len = 100
+
+- change silence value 
+
+silence_thresh = -36
+
 
 if you want to use other language then russian:
 
