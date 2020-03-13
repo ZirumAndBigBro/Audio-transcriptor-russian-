@@ -38,13 +38,13 @@ def silence_based_conversion(path):
 	# set the framerate of result autio
 	song = song.set_frame_rate(16000)
 		
-	# split track where silence is 0.5 seconds or more and get chunks 
+	# split track where silence is 0.1 seconds or more and get chunks 
 	chunks = split_on_silence(song, 
-		# must be silent for at least 0.5 seconds 
-		# or 500 ms. adjust this value based on user 
+		# silence duration in ms. 
+		# adjust this value based on user 
 		# requirement. if the speaker stays silent for 
 		# longer, increase this value. else, decrease it. 
-		min_silence_len = 500, 
+		min_silence_len = 100, 
 
 		# consider it silent if quieter than -36 dBFS 
 		# adjust this per requirement 
