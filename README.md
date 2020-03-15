@@ -28,7 +28,10 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 - start the audio_transcribe.py in IDLE 
 
 # how to optimize for your audio
-- assign an Speaker_id if you want
+- assign an Speaker_id in line
+
+Speaker_id = 'R001'
+
 - if you want to transcribe .wav-files instead of mp3 change 
 
 song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path)
