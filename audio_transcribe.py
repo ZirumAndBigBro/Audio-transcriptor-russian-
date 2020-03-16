@@ -92,9 +92,6 @@ def silence_based_conversion(path):
 		audio_chunk = effects.normalize(audio_chunk)
 
 		# specify the bitrate to be 192k
-		# save audio file
-		audio_chunk.export("./"+Speaker_id+"_{0}.wav".format(i), bitrate ='192k', format ="wav") 
-
 		# save chunk for google recognition as temp.wav
 		audio_chunk_temp.export("./temp.wav", bitrate ='192k', format ="wav") 
 
@@ -128,8 +125,10 @@ def silence_based_conversion(path):
 			# write the output to the metadata.csv.
 			# in the same manner as in LJSpeech-1.1
 			fh.write(filename+'|'+rec+'|'+rec+"\n") 
-
-		# catch any errors. Audio files with errors will be not mentioned in metadata.csv
+			
+			# save audio file
+			audio_chunk.export("./"+Speaker_id+"_{0}.wav".format(i), bitrate ='192k', format ="wav") 
+			# catch any errors. Audio files with errors will be not mentioned in metadata.csv
 		except sr.UnknownValueError: 
 			print("-- Could not understand audio") 
 
