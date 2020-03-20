@@ -40,7 +40,7 @@ Speaker_id = 'R001_'
 
 min_silence_len = 100
 
-- change silence value
+- change silence value (in dBFS)
 
 silence_thresh = -36
 
@@ -48,7 +48,7 @@ silence_thresh = -36
 
 keep_silence = 50
 
-- change audio framerate in result audio
+- change audio framerate (in Hz) in result audio
 
 frame_rate = 16000
 
