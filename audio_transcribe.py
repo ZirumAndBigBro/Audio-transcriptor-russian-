@@ -25,7 +25,7 @@ from pydub import AudioSegment, effects
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
 Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
-min_silence_len = 100 # silence duration for cut 100ms. If the speaker stays silent for longer, increase this value. else, decrease it.
+min_silence_len = 100 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
 silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
 keep_silence = 50 # keep 100 ms of leading/trailing silence.
 frame_rate = 16000 # set the framerate of result autio.
