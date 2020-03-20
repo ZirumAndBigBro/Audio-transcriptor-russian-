@@ -24,7 +24,7 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 
 # how to use
 - This script must be in the same folder with audio files that should be transcripted
-- The names of the audio files must be as follows: 01.mp3, 02.mp3, ..., 95.mp3 (or) 01.wav, 02.wav, ..., 95.wav
+- The names of the audio files must be as follows: 01.mp3, 02.mp3, ..., 99.mp3 (or) 01.wav, 02.wav, ..., 99.wav
 - start the audio_transcribe.py in IDLE 
 
 # how to optimize for your audio
