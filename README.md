@@ -32,6 +32,10 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 
 source_format = 'mp3' --> source_format = 'wav'
 
+- if you want to remove chunks without speech, set
+
+additional_clean = True
+
 - assign an Speaker_id
 
 Speaker_id = 'R001_'
