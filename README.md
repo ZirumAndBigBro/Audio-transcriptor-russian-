@@ -28,26 +28,33 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 - start the audio_transcribe.py in IDLE 
 
 # how to optimize for your audio
-- assign an Speaker_id in line
+- if you want to transcribe .wav-files instead of mp3 change
 
-Speaker_id = 'R001'
+source_format = 'mp3' --> source_format = 'wav'
 
-- if you want to transcribe .wav-files instead of mp3 change 
+- assign an Speaker_id
 
-song = AudioSegment.from_file(path, "mp3") --> song = AudioSegment.from_wav(path)
+Speaker_id = 'R001_'
 
-- change audio framerate in line
-
-song = song.set_frame_rate(16000)
-
-- change silence duration in line
+- change silence duration (in ms) for cut
 
 min_silence_len = 100
 
-- change silence value in line
+- change silence value
 
 silence_thresh = -36
 
+- change silense duration (in ms) to keep in audio
+
+keep_silence = 50
+
+- change audio framerate in result audio
+
+frame_rate = 16000
+
+- change length (in ms) of output audio file
+
+target_length = 4000
 
 - if you want to use other language then russian:
 
@@ -62,4 +69,4 @@ and replace line
 rec = norm.norm_text(rec)
 
 
-I wish you success
+# I wish you success
