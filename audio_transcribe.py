@@ -6,7 +6,7 @@
 # The audio chunks will also be saved in the same manner as in LJSpeech-1.1 dataset.
 
 # This script must be in the same folder with audio files that should be transcripted
-# The names of the audio files must be as follows: 01.mp3, 02.mp3, ..., 95.mp3 (or) 01.wav, 02.wav, ..., 95.wav
+# The names of the audio files must be as follows: 01.mp3, 02.mp3, ..., 99.mp3 (or) 01.wav, 02.wav, ..., 99.wav
 
 # To work with mp3-files you will need to install ffmpeg and put it to PATH.
 # Windows instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
@@ -15,15 +15,22 @@
 import speech_recognition as sr 
 import time
 import os
-from normalizer.normalizer import Normalizer # https://github.com/snakers4/russian_stt_text_normalization
 import re
+from normalizer.normalizer import Normalizer # https://github.com/snakers4/russian_stt_text_normalization
 
 from pydub import AudioSegment 
 from pydub.silence import split_on_silence
 from pydub import AudioSegment, effects
 
-# if you have many speakers, you can give each speaker an unique speaker id
-Speaker_id = 'R001'
+# Settings
+source_format = 'mp3' # or 'wav' format of source audio file.
+Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
+min_silence_len = 100 # silence duration for cut 100ms. If the speaker stays silent for longer, increase this value. else, decrease it.
+silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
+keep_silence = 50 # keep 100 ms of leading/trailing silence.
+frame_rate = 16000 # set the framerate of result autio.
+target_length = 4000 # target length of output audio files in ms.
+
 
 norm = Normalizer()
 
@@ -31,26 +38,27 @@ norm = Normalizer()
 # and applies speech recognition 
 def silence_based_conversion(path): 
 
-	# open the audio file stored in the local system  
-	#song = AudioSegment.from_wav(path) # <-- as a wav file
-	song = AudioSegment.from_file(path, "mp3") # <-- as mp3 file
+	# open the audio file stored in the local system
+	if source_format == 'wav':
+		song = AudioSegment.from_wav(path)
+	else:
+		song = AudioSegment.from_file(path, "mp3")
 
 	# set the framerate of result autio
-	song = song.set_frame_rate(16000)
+	song = song.set_frame_rate(frame_rate)
 		
-	# split track where silence is 0.1 seconds or more and get chunks 
-	chunks = split_on_silence(song, 
-		# silence duration in ms. 
-		# adjust this value based on user 
-		# requirement. if the speaker stays silent for 
-		# longer, increase this value. else, decrease it. 
-		min_silence_len = 100, 
+	# split track where silence is 0.5 seconds or more and get chunks 
+	chunks = split_on_silence(song, min_silence_len, silence_thresh, keep_silence) 
 
-		# consider it silent if quieter than -36 dBFS 
-		# adjust this per requirement 
-		silence_thresh = -36
-	) 
+	# now recombine the chunks so that the parts are at least "target_length" long
+	output_chunks = [chunks[0]]
+	for chunk in chunks[1:]:
+		if len(output_chunks[-1]) < target_length:
+			output_chunks[-1] += chunk
+		else:
+			output_chunks.append(chunk)
 
+	chunks = output_chunks			
 	# create a directory to store the metadata.csv. 
 	try: 
 		os.mkdir('LJSpeech-1.1') 
@@ -96,7 +104,7 @@ def silence_based_conversion(path):
 		audio_chunk_temp.export("./temp.wav", bitrate ='192k', format ="wav") 
 
 		# the name of the newly created chunk 
-		filename = Speaker_id+'_'+str(i)
+		filename = Speaker_id+str(i)
 		print("Processing "+filename) 
 
 		# get the name of the newly created chunk 
@@ -118,16 +126,16 @@ def silence_based_conversion(path):
 			rec = r.recognize_google(audio_listened, language="ru-RU").lower()
 
 			# google recognition return numbers as integers i.e. "1, 200, 35".
-			# text normalizer will read this numbers and return this as a writen russian text i.e. "один, двести, тридцать пять"
+			# text normalization will read this numbers and return this as a writen russian text i.e. "один, двести, тридцать пять"
 			# if you use other language as russian, repalce this line 
 			rec = norm.norm_text(rec)
 
 			# write the output to the metadata.csv.
 			# in the same manner as in LJSpeech-1.1
 			fh.write(filename+'|'+rec+'|'+rec+"\n") 
-			
+
 			# save audio file
-			audio_chunk.export("./"+Speaker_id+"_{0}.wav".format(i), bitrate ='192k', format ="wav") 
+			audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
 			# catch any errors. Audio files with errors will be not mentioned in metadata.csv
 		except sr.UnknownValueError: 
 			print("-- Could not understand audio") 
@@ -143,7 +151,7 @@ def silence_based_conversion(path):
 
 if __name__ == '__main__': 
 	print('Start') 
-	for k in range (1,96): 
+	for k in range (1,99): 
 		path = "{:02d}.mp3".format(k)
 		print("{:02d}.mp3".format(k))
 		try:
@@ -151,5 +159,3 @@ if __name__ == '__main__':
 			silence_based_conversion(path) 
 		except FileNotFoundError:
 			print("File {} not found".format(path))
-
-
