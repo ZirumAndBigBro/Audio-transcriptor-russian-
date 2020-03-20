@@ -24,12 +24,13 @@ from pydub import AudioSegment, effects
 
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
+additional_clean = True # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
 Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
 min_silence_len = 100 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
-silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
-keep_silence = 50 # keep some ms of leading/trailing silence.
+silence_thresh = -40 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
+keep_silence = 80 # keep some ms of leading/trailing silence.
 frame_rate = 16000 # set the framerate of result autio.
-target_length = 4000 # target length of output audio files in ms.
+target_length = 2000 # target length of output audio files in ms.
 
 
 norm = Normalizer()
@@ -50,15 +51,6 @@ def silence_based_conversion(path):
 	# split track where silence is 0.5 seconds or more and get chunks 
 	chunks = split_on_silence(song, min_silence_len, silence_thresh, keep_silence) 
 
-	# now recombine the chunks so that the parts are at least "target_length" long
-	output_chunks = [chunks[0]]
-	for chunk in chunks[1:]:
-		if len(output_chunks[-1]) < target_length:
-			output_chunks[-1] += chunk
-		else:
-			output_chunks.append(chunk)
-
-	chunks = output_chunks			
 	# create a directory to store the metadata.csv. 
 	try: 
 		os.mkdir('LJSpeech-1.1') 
@@ -75,9 +67,66 @@ def silence_based_conversion(path):
 	fh = open("LJSpeech-1.1/metadata.csv", "a+", encoding="utf-8")
 	
 	# move into the directory to store the audio files. 
-	os.chdir('LJSpeech-1.1/wavs') 
+	os.chdir('LJSpeech-1.1/wavs')
 
-	
+	# additional clean. Use it if you want to remove chunks without speech.
+	if additional_clean == True:
+		checked_chunks = [chunks[0]]
+		# check each chunk 
+		for chunk in chunks: 
+
+			# Create 1000 milliseconds silence chunk 
+			# Silent chunks (1000ms) are needed for correct working google recognition
+			chunk_silent = AudioSegment.silent(duration = 1000) 
+
+			# Add silent chunk to beginning and end of audio chunk.
+			# This is done so that it doesn't seem abruptly sliced. 
+			# We will send this chunk to google recognition service
+			audio_chunk_temp = chunk_silent + chunk + chunk_silent 
+
+			# specify the bitrate to be 192k
+			# save chunk for google recognition as temp.wav
+			audio_chunk_temp.export("./check_temp.wav", bitrate ='192k', format ="wav") 
+
+			# get the name of the newly created chunk 
+			# in the AUDIO_FILE variable for later use. 
+			file = 'check_temp.wav'
+
+			# create a speech recognition object 
+			r = sr.Recognizer() 
+
+			# recognize the chunk 
+			with sr.AudioFile(file) as source: 
+				# remove this if it is not working correctly. 
+				r.adjust_for_ambient_noise(source) 
+				audio_listened = r.listen(source) 
+
+				try: 
+					# try converting it to text 
+					# if you use other language as russian, correct the language as described here https://cloud.google.com/speech-to-text/docs/languages
+					rec = r.recognize_google(audio_listened, language="ru-RU").lower()
+					checked_chunks.append(chunk)
+					print("checking chunk - passed")
+				except sr.UnknownValueError: 
+					print("checking chunk - not passed") 
+
+				except sr.RequestError as e: 
+					print("--- Could not request results. check your internet connection") 
+					# finaly remove the temp-file
+			os.remove('./check_temp.wav')
+		
+		chunks = checked_chunks
+        
+	# now recombine the chunks so that the parts are at least "target_length" long
+	output_chunks = [chunks[0]]
+	for chunk in chunks[1:]:
+		if len(output_chunks[-1]) < target_length:
+			output_chunks[-1] += chunk
+		else:
+			output_chunks.append(chunk)
+
+	chunks = output_chunks			
+
 	# process each chunk 
 	for chunk in chunks: 
 		i = str(time.time()) # needed for unique filename
@@ -159,3 +208,4 @@ if __name__ == '__main__':
 			silence_based_conversion(path) 
 		except FileNotFoundError:
 			print("File {} not found".format(path))
+
