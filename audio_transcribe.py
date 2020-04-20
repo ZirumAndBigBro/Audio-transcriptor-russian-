@@ -17,20 +17,21 @@ import time
 import os
 import re
 from normalizer.normalizer import Normalizer # https://github.com/snakers4/russian_stt_text_normalization
-
-from pydub import AudioSegment 
+ 
 from pydub.silence import split_on_silence
 from pydub import AudioSegment, effects
 
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
-additional_clean = True # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
+symbols_gate = False # only chunks with normal symbol rate (symbols per second) will be used
+symbol_rate_min = 10 #min amount of symbols per second audio  
+additional_clean = False # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
 Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
-min_silence_len = 100 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
-silence_thresh = -40 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
-keep_silence = 80 # keep some ms of leading/trailing silence.
+min_silence_len = 500 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
+silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
+keep_silence = 100 # keep some ms of leading/trailing silence.
 frame_rate = 16000 # set the framerate of result autio.
-target_length = 2000 # target length of output audio files in ms.
+target_length = 1000 # target length of output audio files in ms.
 
 
 norm = Normalizer()
@@ -169,6 +170,7 @@ def silence_based_conversion(path):
 			r.adjust_for_ambient_noise(source) 
 			audio_listened = r.listen(source) 
 
+
 		try: 
 			# try converting it to text 
 			# if you use other language as russian, correct the language as described here https://cloud.google.com/speech-to-text/docs/languages
@@ -179,18 +181,36 @@ def silence_based_conversion(path):
 			# if you use other language as russian, repalce this line 
 			rec = norm.norm_text(rec)
 
-			# write the output to the metadata.csv.
-			# in the same manner as in LJSpeech-1.1
-			fh.write(filename+'|'+rec+'|'+rec+"\n") 
+			audio_length = float(len(audio_chunk))/1000
+			symbol_count = float(len(rec))
 
-			# save audio file
-			audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
-			# catch any errors. Audio files with errors will be not mentioned in metadata.csv
+			if symbols_gate == True:
+				if symbol_count / audio_length > symbol_rate_min:
+				
+					print ("rate "+str(symbol_count/audio_length))	
+					# write the output to the metadata.csv.
+					# in the same manner as in LJSpeech-1.1
+					fh.write(filename+'|'+rec+'|'+rec+"\n") 
+
+					# save audio file
+					audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
+					# catch any errors. Audio files with errors will be not mentioned in metadata.csv
+				else: 
+					print("- text to short")
+			else:
+				# write the output to the metadata.csv.
+				# in the same manner as in LJSpeech-1.1
+				fh.write(filename+'|'+rec+'|'+rec+"\n") 
+
+				# save audio file
+				audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
+				# catch any errors. Audio files with errors will be not mentioned in metadata.csv
+
 		except sr.UnknownValueError: 
 			print("-- Could not understand audio") 
 
 		except sr.RequestError as e: 
-			print("--- Could not request results. check your internet connection") 
+			print("--- Could not request results. Check your internet connection") 
 
 		# finaly remove the temp-file
 		os.remove('./temp.wav')
@@ -208,4 +228,3 @@ if __name__ == '__main__':
 			silence_based_conversion(path) 
 		except FileNotFoundError:
 			print("File {} not found".format(path))
-
