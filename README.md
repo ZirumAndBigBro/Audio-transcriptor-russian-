@@ -32,9 +32,17 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 
 source_format = 'mp3' --> source_format = 'wav'
 
+- if you want to remove chunks with small symbol rate (text symbols per second audio), set
+
+symbols_gate = True and set symbol_rate_min
+
+you can use it to separate fast speaking speaker, and/or poor transcriptions.
+
 - if you want to remove chunks without speech, set
 
 additional_clean = True
+
+use it if you have audio with bad quality and chunks without speach.
 
 - assign an Speaker_id
 
@@ -42,7 +50,7 @@ Speaker_id = 'R001_'
 
 - change silence duration (in ms) for cut
 
-min_silence_len = 100
+min_silence_len = 500
 
 - change silence value (in dBFS)
 
@@ -50,7 +58,7 @@ silence_thresh = -36
 
 - change silense duration (in ms) to keep in audio
 
-keep_silence = 50
+keep_silence = 100
 
 - change audio framerate (in Hz) in result audio
 
@@ -58,7 +66,7 @@ frame_rate = 16000
 
 - change length (in ms) of output audio file
 
-target_length = 4000
+target_length = 1000
 
 - if you want to use other language then russian:
 
