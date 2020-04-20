@@ -24,7 +24,7 @@ from pydub import AudioSegment, effects
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
 symbols_gate = False # only chunks with normal symbol rate (symbols per second) will be used
-symbol_rate_min = 10 #min amount of symbols per second audio  
+symbol_rate_min = 10 # min amount of symbols per second audio  
 additional_clean = False # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
 Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
 min_silence_len = 500 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
