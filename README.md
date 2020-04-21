@@ -34,9 +34,13 @@ source_format = 'mp3' --> source_format = 'wav'
 
 - if you want to remove chunks with small symbol rate (text symbols per second audio), set
 
-symbols_gate = True and set symbol_rate_min
+symbols_gate = True 
 
-you can use it to separate fast speaking speaker, and/or poor transcriptions.
+and set 
+
+symbol_rate_min and symbol_rate_max
+
+you can use it to separate one speaker speaking with special speaking speed, and/or poor transcriptions.
 
 - if you want to remove chunks without speech, set
 
