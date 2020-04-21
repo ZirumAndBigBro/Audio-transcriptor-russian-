@@ -196,7 +196,7 @@ def silence_based_conversion(path):
 					audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
 					# catch any errors. Audio files with errors will be not mentioned in metadata.csv
 				else: 
-					print("- text to short")
+					print("- text too short")
 			else:
 				# write the output to the metadata.csv.
 				# in the same manner as in LJSpeech-1.1
