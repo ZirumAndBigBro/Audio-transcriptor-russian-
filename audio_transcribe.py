@@ -23,9 +23,10 @@ from pydub import AudioSegment, effects
 
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
-symbols_gate = False # only chunks with normal symbol rate (symbols per second) will be used
-symbol_rate_min = 10 # min amount of symbols per second audio  
-additional_clean = False # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
+symbols_gate = True # only chunks with normal symbol rate (symbols per second) will be used
+symbol_rate_min = 10 # min amount of symbols per second audio. if you use symbols_gate
+symbol_rate_max = 20 # max amount of symbols per second audio if you use symbols_gate
+additional_clean = True # before use chunk will be send to google cloud, if google can not recognize words in this chunk, it will be not used. True will consume additional time.
 Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an unique speaker id.
 min_silence_len = 500 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
 silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
@@ -181,11 +182,11 @@ def silence_based_conversion(path):
 			# if you use other language as russian, repalce this line 
 			rec = norm.norm_text(rec)
 
-			audio_length = float(len(audio_chunk))/1000
-			symbol_count = float(len(rec))
+			audio_length = float(len(audio_chunk))/1000 # audio length in seconds
+			symbol_count = float(len(rec)) # text length in symbols
 
 			if symbols_gate == True:
-				if symbol_count / audio_length > symbol_rate_min:
+				if (symbol_count / audio_length > symbol_rate_min) and (symbol_count / audio_length < symbol_rate_max):
 				
 					print ("rate "+str(symbol_count/audio_length))	
 					# write the output to the metadata.csv.
@@ -196,7 +197,7 @@ def silence_based_conversion(path):
 					audio_chunk.export("./"+Speaker_id+"{0}.wav".format(i), bitrate ='192k', format ="wav") 
 					# catch any errors. Audio files with errors will be not mentioned in metadata.csv
 				else: 
-					print("- text too short")
+					print("- text too short or too long")
 			else:
 				# write the output to the metadata.csv.
 				# in the same manner as in LJSpeech-1.1
