@@ -32,7 +32,7 @@ Text normalization from https://github.com/snakers4/russian_stt_text_normalizati
 
 source_format = 'mp3' --> source_format = 'wav'
 
-- if you want to remove chunks with small symbol rate (text symbols per second audio), set
+- if you want to remove chunks with strange symbol rate (text symbols per second audio), set
 
 symbols_gate = True 
 
@@ -40,7 +40,7 @@ and set
 
 symbol_rate_min and symbol_rate_max
 
-you can use it to separate one speaker speaking with special speaking speed, and/or poor transcriptions.
+you can use it to separate one speaker speaking with special speaking speed, and/or poor transcriptions. You will also get additional information about rate and audio length in metadata.csv.
 
 - if you want to remove chunks without speech, set
 
