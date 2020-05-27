@@ -1,0 +1,1 @@
+download pretrained bert model here https://drive.google.com/file/d/190dLqhRjqgNJLKBqz0OxQ3TzxSm5Qbfx/view
