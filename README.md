@@ -92,11 +92,11 @@ rec = r.recognize_google(audio_listened, language="ru-RU").lower()
 
 as discribed here https://cloud.google.com/speech-to-text/docs/languages
 
-and replace line
+replace line
 
 rec = norm.norm_text(rec)
 
-set
+and set
 
 punctuation = False
 
