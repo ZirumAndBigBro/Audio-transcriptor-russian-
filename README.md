@@ -19,9 +19,9 @@ torch --> for normalizer
 
 tqdm --> for normalizer
 
-pytorch_pretrained_bert==0.6.2 --> for bert (punctuation)
+pytorch_pretrained_bert==0.6.2 --> for punctuation (bert)
 
-pymorphy2==0.8 --> for bert (punctuation)
+pymorphy2==0.8 --> for punctuation (bert)
 
 to work with mp3-files you will need to install ffmpeg and put it to PATH. https://github.com/FFmpeg/FFmpeg Windows installation instruction here http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
 
