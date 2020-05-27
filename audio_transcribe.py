@@ -20,6 +20,7 @@ from normalizer.normalizer import Normalizer # https://github.com/snakers4/russi
  
 from pydub.silence import split_on_silence
 from pydub import AudioSegment, effects
+from bert.bert_punctuation import Bert_punctuation # https://github.com/vlomme/Bert-Russian-punctuation don't forget to download pretrained bert model https://drive.google.com/file/d/190dLqhRjqgNJLKBqz0OxQ3TzxSm5Qbfx/view
 
 # Settings
 source_format = 'mp3' # or 'wav' format of source audio file.
@@ -31,11 +32,13 @@ Speaker_id = 'R001_' # if you have many speakers, you can give each speaker an u
 min_silence_len = 500 # silence duration for cut in ms. If the speaker stays silent for longer, increase this value. else, decrease it.
 silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
 keep_silence = 100 # keep some ms of leading/trailing silence.
-frame_rate = 16000 # set the framerate of result autio.
+frame_rate = 16000 # set the framerate of result audio.
 target_length = 1000 # target length of output audio files in ms.
+punctuation = False # will add commas in text. Set it to False if you use other language as russian.
 
-
+# Load pretrained models
 norm = Normalizer()
+Bert_punctuation = Bert_punctuation()
 
 # a function that splits the audio file into chunks 
 # and applies speech recognition 
@@ -182,6 +185,12 @@ def silence_based_conversion(path):
 			# if you use other language as russian, repalce this line 
 			rec = norm.norm_text(rec)
 
+				#bert punctuation - will place commas in text
+			if punctuation == True:
+				rec = [rec]
+				rec = Bert_punctuation.predict(rec)
+				rec = (rec [0])
+
 			audio_length_ms = len(audio_chunk) # in milliseconds
 			audio_length_sec = float(len(audio_chunk))/1000 # in seconds
 			symbol_count = float(len(rec))
@@ -189,8 +198,8 @@ def silence_based_conversion(path):
 			# here starts the filtering on symbol rate
 			if symbols_gate == True:
 				if (symbol_count / audio_length_sec > symbol_rate_min) and (symbol_count / audio_length_sec < symbol_rate_max):
-					rate = int(symbol_count/audio_length_sec)				
-					print ("rate "+str(rate))	
+					rate = int(symbol_count/audio_length_sec)
+					print ("rate "+str(rate))
 					# write the output to the metadata.csv.
 					# in the same manner as in LJSpeech-1.1
 					fh.write(filename+'|'+rec+'|'+rec+'|'+str(rate)+'|'+str(audio_length_ms)+"\n") 
