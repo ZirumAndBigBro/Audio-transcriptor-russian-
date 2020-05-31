@@ -33,7 +33,7 @@ min_silence_len = 500 # silence duration for cut in ms. If the speaker stays sil
 silence_thresh = -36 # consider it silent if quieter than -36 dBFS. Adjust this per requirement.
 keep_silence = 100 # keep some ms of leading/trailing silence.
 frame_rate = 16000 # set the framerate of result audio.
-target_length = 1000 # target length of output audio files in ms.
+target_length = 1000 # min target length of output audio files in ms.
 punctuation = False # will add commas in text. Set it to False if you use other language as russian.
 
 # Load pretrained models
