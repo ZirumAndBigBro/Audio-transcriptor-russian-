@@ -47,9 +47,11 @@ def silence_based_conversion(path):
 	# open the audio file stored in the local system
 	if source_format == 'wav':
 		song = AudioSegment.from_wav(path)
+		song = song.set_channels(1)
 	else:
 		song = AudioSegment.from_file(path, "mp3")
-
+		song = song.set_channels(1)
+		
 	# set the framerate of result autio
 	song = song.set_frame_rate(frame_rate)
 		
