@@ -201,7 +201,7 @@ def silence_based_conversion(path):
 			if symbols_gate == True:
 				if (symbol_count / audio_length_sec > symbol_rate_min) and (symbol_count / audio_length_sec < symbol_rate_max):
 					rate = int(symbol_count/audio_length_sec)
-					print ("rate "+str(rate))
+					print ("Symbol rate "+str(rate))
 					# write the output to the metadata.csv.
 					# in the same manner as in LJSpeech-1.1
 					fh.write(filename+'|'+rec+'|'+rec+'|'+str(rate)+'|'+str(audio_length_ms)+"\n") 
