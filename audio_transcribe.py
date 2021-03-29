@@ -236,8 +236,8 @@ def silence_based_conversion(path):
 if __name__ == '__main__': 
 	print('Start') 
 	for k in range (1,99): 
-		path = "{:02d}.mp3".format(k)
-		print("{:02d}.mp3".format(k))
+		path = "{:02d}.{}".format(k, source_format)
+		print("{:02d}.{}".format(k, source_format))
 		try:
 			open(path)
 			silence_based_conversion(path) 
